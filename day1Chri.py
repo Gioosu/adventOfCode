@@ -7,7 +7,31 @@ with open('input.txt', 'r') as f:
 
         direction = line[0]
         moves = int(line[1:])
-        result += moves // 100
+        
+        for _ in range(moves):
+            
+            if direction == 'L':
+                dialPos -= 1
+                
+                if dialPos < 0:
+                    dialPos = 99 
+
+            else: 
+                dialPos += 1
+
+                if dialPos > 99:
+                    dialPos = 0 
+            
+            if dialPos == 0:
+                result += 1
+
+print(result)
+
+        
+
+
+''' #FIRST SOLUTION
+result += moves // 100
         moves = moves % 100
 
         if direction == 'L':
@@ -27,16 +51,6 @@ with open('input.txt', 'r') as f:
             result += 1
         
     print(result)
-
-'''
-l = [x for x in range (0, 100)]
-            
-class DIAL:
-
-    def __init__(self):
-        self.pos = l[50]
-    
-    def moveL(self):
 '''
 
         
