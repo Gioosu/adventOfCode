@@ -2,26 +2,24 @@ dialPos = 50
 result = 0
 
 def move(dialPos, result, direction, moves):
-    print(dialPos)
-    result += moves // 100  
+    #print("START      -> dial: ", dialPos, "result: ", result, "moves: ", moves)
+    result += moves // 100 
     moves = moves % 100
-    print(result, moves)
 
-    if direction == 'L':
-        if(dialPos - moves < 0):
-            moves = moves - dialPos
-            dialPos = 100
+    if direction == 'L': 
+        if(dialPos - moves <= 0 and 0 < dialPos):
             result += 1
-        if(dialPos == 0):
-            result += 1 
-        dialPos = dialPos - moves
-        print(dialPos)
+        
+        moves = -1 * moves
 
-    else:
-        dialPos += moves
-        result += dialPos // 100  
-        dialPos = dialPos % 100
+    else: 
+        if(dialPos < 100 and 100 <= dialPos + moves):
+            result += 1
+        
+    dialPos = (dialPos + moves) % 100
+        
 
+    #print("END        -> dial: ", dialPos, "result: ", result, "moves: ", moves)
     return dialPos, result
 
 with open('input.txt', 'r') as f:
@@ -31,7 +29,7 @@ with open('input.txt', 'r') as f:
         direction = line[0]
         moves = int(line[1:])
         
-        print(line)
+        #print(line)
                    
         dialPos, result = move(dialPos, result, direction, moves)
 
