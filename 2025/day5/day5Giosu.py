@@ -90,16 +90,39 @@ Process the database file again. How many ingredient IDs are considered
 to be fresh according to the fresh ingredient ID ranges?
 '''
 def part2(fresh):
-    freshResult = set()
-  
+    coverage = []
+    result = 0
+
     for couple in fresh:
         left, right = couple.split('-')
         left, right = int(left), int(right)
+        coverage += [(left, right)]
+    
+    coverage.sort()
 
-        for id in range(left, right + 1):
-            freshResult.add(str(id))
+    length = len(coverage)
+    i = 0
 
-    print(len(set))
+    while i < length - 1:
+        l1, r1 = coverage[i]
+        l2, r2 = coverage[i + 1]
+
+        if(r1 >= l2):
+            if(r1 > r2):
+                coverage[i] = (l1, r1)
+            else:
+                coverage[i] = (l1, r2)
+            coverage.pop(i + 1)
+            length -= 1
+        else:
+            i += 1
+
+    print(coverage)
+
+    for l1, r1 in coverage:
+        result = result + (r1 - l1 + 1)
+    
+    print(result)
 
 ### main starts here ###
 part = 2
