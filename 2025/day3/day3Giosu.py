@@ -101,7 +101,32 @@ What is the new total output joltage?
 '''
 
 def part2(bank):
-    result = 0
+    final = 0
+
+    for batteries in bank:
+        result = ''
+        length = len(batteries)
+        numLeft, i = 12, 0
+
+        while numLeft > 0:
+            bestPosition = 0
+            best = 0
+            
+            while length - i >= numLeft:
+                #print(input[i], i, numLeft)
+                if int(batteries[i]) > best:
+                    bestPosition =  i
+                    best = int(batteries[i])
+                i += 1
+            
+            numLeft -= 1
+            #print(input[bestPosition])
+            result = result + batteries[bestPosition]
+            i = bestPosition + 1
+
+        final = final + int(result)
+
+    print(final)
 
 # main starts here
 # set 1 to run part 1, set 2 to run part 2
