@@ -52,13 +52,16 @@ How many of the available ingredient IDs are fresh?
 def part1(fresh, items):
     result = 0
 
+    # iter items
     for item in items:
         id = int(item)
 
+        # iter fresh ranges
         for couple in fresh:
             left, right = couple.split('-')
             left, right = int(left), int(right)
 
+            # checks if item is in the range
             if left <= id and id <= right:
                 result += 1
                 break
@@ -89,10 +92,12 @@ ingredient ID ranges consider a total of 14 ingredient IDs to be fresh.
 Process the database file again. How many ingredient IDs are considered 
 to be fresh according to the fresh ingredient ID ranges?
 '''
+
 def part2(fresh):
     coverage = []
     result = 0
 
+    # makes a list with tuples of ranges
     for couple in fresh:
         left, right = couple.split('-')
         left, right = int(left), int(right)
@@ -103,6 +108,7 @@ def part2(fresh):
     length = len(coverage)
     i = 0
 
+    # merge compatible ranges [(1, 3), (2, 4)] becomes [(1, 4)]
     while i < length - 1:
         l1, r1 = coverage[i]
         l2, r2 = coverage[i + 1]
@@ -117,8 +123,7 @@ def part2(fresh):
         else:
             i += 1
 
-    print(coverage)
-
+    # sums up
     for l1, r1 in coverage:
         result = result + (r1 - l1 + 1)
     
