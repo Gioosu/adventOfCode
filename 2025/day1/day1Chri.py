@@ -1,7 +1,7 @@
 dialPos = 50
 result = 0
 
-with open('input.txt', 'r') as f:
+with open('./2025/day1/input.txt', 'r') as f:
     for line in f:
         line = line.strip('\n')
 

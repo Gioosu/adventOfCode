@@ -1,6 +1,6 @@
 rangeList = []
 
-with open('/Users/chriselleannguillermo/Documents/GitHub/adventOfCode/test.txt', 'r') as f:
+with open('./2025/day2/input.txt', 'r') as f:
     for line in f:
         l = line.split(',')
 
