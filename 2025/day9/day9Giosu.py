@@ -183,56 +183,85 @@ Using two red tiles as opposite corners, what is the largest area of any
 rectangle you can make using only red and green tiles?
 '''
 def part2(tiles):
-    valid = set()
-    prev = [tiles[len(tiles) - 1][0], tiles[len(tiles) - 1][1]]
-    for x, y in tiles:
-        minX, maxX = min(x, prev[0]), max(x, prev[0])
-        minY, maxY = min(y, prev[1]), max(y, prev[1])
-        for i in range(minX, maxX + 1):
-            for j in range(minY, maxY + 1):
-                valid.add((i, j))
+    # function to find if coords are inside or outside the square
+    def is_inside(x, y):
+        size = len(tiles)
+        inside = False
+        p1x, p1y = tiles[0]
 
-        prev = [x, y]
+        # iter the tiles
+        for i in range(size + 1):
+            # % size to connect last to first
+            p2x, p2y = tiles[i % size]
+            if x == p1x == p2x and min(p1y, p2y) <= y <= max(p1y, p2y): return True
+            if y == p1y == p2y and min(p1x, p2x) <= x <= max(p1x, p2x): return True
+            
+            # had to use google to study something about raycasting
+            if y > min(p1y, p2y):
+                if y <= max(p1y, p2y):
+                    if x <= max(p1x, p2x):
+                        if p1y != p2y:
+                            # calc the straight line passing through the points
+                            xints = (y - p1y) * (p2x - p1x) / (p2y - p1y) + p1x
+                        # vertical or left
+                        if p1x == p2x or x <= xints:
+                            inside = not inside
+            # update previous
+            p1x, p1y = p2x, p2y
+        return inside
 
-    min_x, max_x = min(t[0] for t in tiles), max(t[0] for t in tiles)
-    min_y, max_y = min(t[1] for t in tiles), max(t[1] for t in tiles)
+    # find all segments connecting the edges
+    segments = []
+    for i in range(len(tiles)):
+        p1 = tiles[i]
+        p2 = tiles[(i + 1) % len(tiles)]
+        segments.append((p1, p2))
 
-    for y in range(min_y, max_y + 1):
-        is_inside = False
-        for x in range(min_x, max_x + 1):
-            if (x, y) in valid:
-                if (x, y-1) in valid: 
-                    is_inside = not is_inside
+    # check if all corners are inside
+    def is_rect_valid(x1, y1, x2, y2):
+        corners = [(x1, y1), (x2, y1), (x1, y2), (x2, y2)]
+        for cx, cy in corners:
+            if not is_inside(cx, cy):
+                return False
+        
+        # check if any segments of the "red" polygon goes through our rectangle
+        # we are working just with horizontal or vertical so we just check
+        # if it cuts the segments in half
+        for p1, p2 in segments:
+            # vertical segments
+            if p1[0] == p2[0]:
+                sx = p1[0]
+                sy_min, sy_max = min(p1[1], p2[1]), max(p1[1], p2[1])
+                if x1 < sx < x2: # segment cuts off a vertical border
+                    if not (sy_max <= y1 or sy_min >= y2):
+                        return False
+            # horizontal segments
             else:
-                if is_inside:
-                    valid.add((x, y))
+                sy = p1[1]
+                sx_min, sx_max = min(p1[0], p2[0]), max(p1[0], p2[0])
+                if y1 < sy < y2:
+                    if not (sx_max <= x1 or sx_min >= x2):
+                        return False
+        return True
 
-    result = 0
+    max_area = 0
+    # find the best
     for i in range(len(tiles)):
         for j in range(i + 1, len(tiles)):
+            x1, y1 = tiles[i]
+            x2, y2 = tiles[j]
+            
+            min_x, max_x = min(x1, x2), max(x1, x2)
+            min_y, max_y = min(y1, y2), max(y1, y2)
+            
             area = getArea(tiles[i], tiles[j])
+            if area <= max_area:
+                continue
+            
+            if is_rect_valid(min_x, min_y, max_x, max_y):
+                max_area = area
 
-            if area > result:
-                minX, maxX = min(tiles[i][0], tiles[j][0]), max(tiles[i][0], tiles[j][0])
-                minY, maxY = min(tiles[i][1], tiles[j][1]), max(tiles[i][1], tiles[j][1])
-
-                inside = True
-                for w in range(minX, maxX + 1):
-                    if (w, minY) not in valid or (w, maxY) not in valid:
-                        inside = False
-                        break
-                
-                for h in range(minY, maxY + 1):
-                    if (minX, h) not in valid or (maxX, h) not in valid:
-                        inside = False
-                        break
-                
-                if inside:
-                    result = area
-    
-    print(result)
-
-
+    print(max_area)
 
 ### Main starts here ###
 part = 2
